@@ -14,17 +14,20 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.TextView;
 
 /**
- * Utility class for fetching rss feed via http. Fetches http in background
- * process.
+ * Utility class for http requests. Fetches and parses RSS feed. Downloads
+ * files.
  */
 public class HttpUtil extends AsyncTask<String, Void, String> {
 	private String url;
-	private LinearLayout layout;
+	private LinearLayout layout; // main activity layout
+	private RSSUtil rss;
 
 	public HttpUtil(String url, LinearLayout layout) {
 		this.url = url;
@@ -32,6 +35,9 @@ public class HttpUtil extends AsyncTask<String, Void, String> {
 		this.layout.setOrientation(LinearLayout.VERTICAL);
 	}
 
+	/**
+	 * Downloads rss xml in background process. Returns the xml in a string.
+	 */
 	@Override
 	protected String doInBackground(String... params) {
 		BufferedReader in = null;
@@ -76,17 +82,41 @@ public class HttpUtil extends AsyncTask<String, Void, String> {
 		return data;
 	}
 
+	// Listener for download link buttons
+	View.OnClickListener buttonClickHandler = new View.OnClickListener() {
+
+		public void onClick(View v) {
+			Log.d("OD", "CLICKED");
+			if (v.isClickable()) {
+				Button link = (Button) v;
+				String linkURL = (String) link.getText();
+
+				if (Downloader.isDownloadManagerAvailable(layout.getContext())) {
+					Downloader downloader = new Downloader(layout.getContext(),
+							linkURL);
+					downloader.download();
+				}
+			}
+		}
+	};
+
+	/**
+	 * Executes after doInBackground is finished. Parses RSS XML. Populates
+	 * Scroll Layout with buttons to download podcasts.
+	 * 
+	 */
 	@Override
 	protected void onPostExecute(String result) {
 		super.onPostExecute(result);
-		RSSUtil rss = new RSSUtil(result);
+		rss = new RSSUtil(result);
 		ArrayList<String> downloadLinks = rss.getDownloadLinks();
 		for (String s : downloadLinks) {
-			TextView tv = new TextView(layout.getContext());
+			Button tv = new Button(layout.getContext());
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
 					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			tv.setLayoutParams(lp);
 			tv.setText(s);
+			tv.setOnClickListener(buttonClickHandler);
 			layout.addView(tv);
 		}
 	}

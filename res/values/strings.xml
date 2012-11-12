@@ -2,5 +2,6 @@
 
     <string name="app_name">MMPodcaster</string>
     <string name="title_activity_mmpodcaster">MMPodcaster</string>
+    <string name="linksTitle">Download Links:</string>
 
 </resources>

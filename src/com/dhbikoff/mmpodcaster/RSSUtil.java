@@ -2,6 +2,10 @@ package com.dhbikoff.mmpodcaster;
 
 import java.util.ArrayList;
 
+/**
+ * RSS parser. Takes RSS XML string and returns download links.
+ *  
+ */
 public class RSSUtil {
     //private String title;
     private ArrayList<String> downloadLinks;
@@ -13,6 +17,10 @@ public class RSSUtil {
         parse();
     }
 
+    /**
+     * Splits xml string and finds mp3 download links.
+     * Returns ArrayList of download links 
+     */
     private void parse() {
         downloadLinks = new ArrayList<String>();
         String[] splitFeed = rssRaw.split(" ");
@@ -34,8 +42,10 @@ public class RSSUtil {
         }
     }
 
+    /**
+     * Returns ArrayList of download links. 
+     */
     public ArrayList<String> getDownloadLinks() {
         return downloadLinks;
     }
-
 }

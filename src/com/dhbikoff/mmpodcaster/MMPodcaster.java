@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
  */
 public class MMPodcaster extends Activity {
 
+	// RSS feed URL
 	public final String address = "http://feeds.feedburner.com/BillBurr?format=xml";
 
 	@Override
@@ -18,6 +19,6 @@ public class MMPodcaster extends Activity {
 		LinearLayout layout = (LinearLayout) findViewById(R.id.scroll_layout);
 		HttpUtil rssData = new HttpUtil(address, layout);
 		rssData.execute("");
-	}
 
+	}
 }
