@@ -86,16 +86,15 @@ public class HttpUtil extends AsyncTask<String, Void, String> {
 	View.OnClickListener buttonClickHandler = new View.OnClickListener() {
 
 		public void onClick(View v) {
-			Log.d("OD", "CLICKED");
+			Log.d("POD", "CLICKED");
 			if (v.isClickable()) {
 				Button link = (Button) v;
 				String linkURL = (String) link.getText();
+				
+				DownloadOrStreamDialog dialog = new DownloadOrStreamDialog(v.getContext(), linkURL);
+				dialog.build();
+				dialog.show();
 
-				if (Downloader.isDownloadManagerAvailable(layout.getContext())) {
-					Downloader downloader = new Downloader(layout.getContext(),
-							linkURL);
-					downloader.download();
-				}
 			}
 		}
 	};

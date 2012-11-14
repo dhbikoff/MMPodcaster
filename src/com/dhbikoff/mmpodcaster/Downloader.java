@@ -32,8 +32,17 @@ public class Downloader {
 	 * Gets filename from URL. 
 	 */
 	private void parseURL(String url) {
-		int fileNameIndex = url.indexOf("MMPC");
-		fileName = url.substring(fileNameIndex);
+		int fileNameIndex = 0;
+		
+		// find final slash in url to get filename
+		for (int i = 0; i < url.length(); i++) {
+			int slashIndex = url.indexOf("/", i);
+			if (slashIndex != -1) {
+				fileNameIndex = slashIndex;
+			}
+		}
+		
+		fileName = url.substring(++fileNameIndex);
 		Log.d("POD", fileName);
 	}
 
