@@ -1,0 +1,9 @@
+Stream or Download Bill Burr's Monday Morning Podcast.
+Android API level 9 or higher.
+
+TODO: 
+    -add Async download option to support lower APIs
+    -Improve UI
+    -Add music player service to allow background streaming/playing
+    -code cleanup
+    
