@@ -3,49 +3,58 @@ package com.dhbikoff.mmpodcaster;
 import java.util.ArrayList;
 
 /**
- * RSS parser. Takes RSS XML string and returns download links.
- *  
- */
+ * RSS parser. Takes RSS XML string and pulls MP3 links for podcasts.
+ * 
+ **/
 public class RSSUtil {
-    //private String title;
-    private ArrayList<String> downloadLinks;
-    //private String imageLink;
-    private String rssRaw;
+	private ArrayList<String> downloadLinks;
+	private String rssRaw;
 
-    public RSSUtil(String xml) {
-        rssRaw = xml;
-        parse();
-    }
+	/**
+	 * Constructor. Takes XML string and pulls MP3 links.
+	 * 
+	 * @param xml
+	 *            RSS feed
+	 * 
+	 **/
+	public RSSUtil(String xml) {
+		rssRaw = xml;
+		parse();
+	}
 
-    /**
-     * Splits xml string and finds mp3 download links.
-     * Returns ArrayList of download links 
-     */
-    private void parse() {
-        downloadLinks = new ArrayList<String>();
-        String[] splitFeed = rssRaw.split(" ");
-        for (int i = 0; i < splitFeed.length; i++) {
-            // Log.d("PODCASTER", splitFeed[i]);
-            if (splitFeed[i].contains("blubrry")) {
-                int start = splitFeed[i].indexOf("http");
-                int end = splitFeed[i].indexOf(".mp3") + 4;
-                if (start < end) {
-                    String link = splitFeed[i].substring(start, end);
-                    int badLinkIndex = link.indexOf("http", 1); 
-                    if (badLinkIndex != -1) {
-                        link = link.substring(badLinkIndex);
-                    }
-                    downloadLinks.add(link);
-                    //Log.d("POD", link);
-                }
-            }
-        }
-    }
+	/**
+	 * Splits XML string and searches for mp3 download links.
+	 * Collects found links in an ArrayList<String>.
+	 * 
+	 **/
+	private void parse() {
+		downloadLinks = new ArrayList<String>();
+		String[] splitFeed = rssRaw.split(" ");
+		for (int i = 0; i < splitFeed.length; i++) {
+			// find file hosting site
+			if (splitFeed[i].contains("blubrry")) {
+				// pull link
+				int start = splitFeed[i].indexOf("http");
+				int end = splitFeed[i].indexOf(".mp3") + 4;
+				if (start < end) {
+					String link = splitFeed[i].substring(start, end);
+					int badLinkIndex = link.indexOf("http", 1);
+					if (badLinkIndex != -1) {
+						link = link.substring(badLinkIndex);
+					}
+					downloadLinks.add(link);
+				}
+			}
+		}
+	}
 
-    /**
-     * Returns ArrayList of download links. 
-     */
-    public ArrayList<String> getDownloadLinks() {
-        return downloadLinks;
-    }
+	/**
+	 * Getter for MP3 links.
+	 * 
+	 * @return ArrayList of MP3 links.
+	 * 
+	 **/
+	public ArrayList<String> getDownloadLinks() {
+		return downloadLinks;
+	}
 }

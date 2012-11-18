@@ -10,18 +10,29 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 
 /**
- * DownloadManager wrapper class. Manages the downloading of the podcast in
+ * DownloadManager wrapper class. Manages the downloading of a file in a
  * background process.
- */
+ * 
+ **/
 public class Downloader {
 
 	private String url;
 	private String fileName;
 	private Context context;
 
+	/**
+	 * Constructor. Takes an Android Context and a URL string for the download
+	 * link. Calls a parsing helper function to pull out the filename.
+	 * 
+	 * @param context
+	 *            Android context
+	 * 
+	 * @param url
+	 *            download link
+	 * 
+	 **/
 	public Downloader(Context context, String url) {
 		this.context = context;
 		this.url = url;
@@ -29,11 +40,12 @@ public class Downloader {
 	}
 
 	/**
-	 * Gets filename from URL. 
-	 */
+	 * Gets filename from URL.
+	 * 
+	 **/
 	private void parseURL(String url) {
 		int fileNameIndex = 0;
-		
+
 		// find final slash in url to get filename
 		for (int i = 0; i < url.length(); i++) {
 			int slashIndex = url.indexOf("/", i);
@@ -41,14 +53,21 @@ public class Downloader {
 				fileNameIndex = slashIndex;
 			}
 		}
-		
+
 		fileName = url.substring(++fileNameIndex);
-		Log.d("POD", fileName);
 	}
 
 	/**
-	 * Checks Android API level for DownloadManager. 
-	 */
+	 * Checks Android API level for DownloadManager usage.
+	 * 
+	 * TODO: use AsyncTask to download for lower API versions.
+	 * 
+	 * @param context
+	 *            Android Context
+	 * 
+	 * @return true if we can use DownloadManager
+	 * 
+	 **/
 	public static boolean isDownloadManagerAvailable(Context context) {
 		try {
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
@@ -68,8 +87,9 @@ public class Downloader {
 	}
 
 	/**
-	 * Launches download process.  
-	 */
+	 * Launches download thread.
+	 * 
+	 **/
 	public void download() {
 		DownloadManager.Request request = new DownloadManager.Request(
 				Uri.parse(url));

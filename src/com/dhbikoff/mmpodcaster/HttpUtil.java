@@ -14,34 +14,72 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 /**
- * Utility class for http requests. Fetches and parses RSS feed. Downloads
- * files.
- */
+ * Utility class to handle asynchronous HTTP functions and update main UI.
+ * 
+ **/
 public class HttpUtil extends AsyncTask<String, Void, String> {
 	private String url;
 	private LinearLayout layout; // main activity layout
 	private RSSUtil rss;
 
+	View.OnClickListener buttonClickHandler = new View.OnClickListener() {
+
+		/**
+		 * Responds to download button clicks. Pulls link from button text and
+		 * launches an AlertDialog to prompt the user to stream or download file
+		 * 
+		 * @param v
+		 *            clicked button
+		 * 
+		 **/
+		public void onClick(View v) {
+			if (v.isClickable()) {
+				Button link = (Button) v;
+				String linkURL = (String) link.getText();
+				DownloadOrStreamDialog dialog = new DownloadOrStreamDialog(
+						v.getContext(), linkURL);
+				dialog.show();
+
+			}
+		}
+	};
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param url
+	 *            file URL
+	 * 
+	 * @param layout
+	 *            layout object for displaying UI objects
+	 * 
+	 **/
 	public HttpUtil(String url, LinearLayout layout) {
 		this.url = url;
 		this.layout = layout;
+		// allow scrolling
 		this.layout.setOrientation(LinearLayout.VERTICAL);
 	}
 
 	/**
-	 * Downloads rss xml in background process. Returns the xml in a string.
-	 */
+	 * Opens HTTP connection and fetches page contents in String form.
+	 * 
+	 * @param params
+	 *            URL
+	 * 
+	 * @return web page String
+	 * 
+	 **/
 	@Override
 	protected String doInBackground(String... params) {
 		BufferedReader in = null;
-		String data = null;
+		String page = null;
 
 		try {
 			HttpClient client = new DefaultHttpClient();
@@ -60,7 +98,7 @@ public class HttpUtil extends AsyncTask<String, Void, String> {
 			}
 
 			in.close();
-			data = sb.toString();
+			page = sb.toString();
 
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
@@ -68,8 +106,8 @@ public class HttpUtil extends AsyncTask<String, Void, String> {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-
 		} finally {
+			// make sure the buffer is released
 			if (in != null) {
 				try {
 					in.close();
@@ -79,31 +117,17 @@ public class HttpUtil extends AsyncTask<String, Void, String> {
 			}
 		}
 
-		return data;
+		return page;
 	}
 
-	// Listener for download link buttons
-	View.OnClickListener buttonClickHandler = new View.OnClickListener() {
-
-		public void onClick(View v) {
-			Log.d("POD", "CLICKED");
-			if (v.isClickable()) {
-				Button link = (Button) v;
-				String linkURL = (String) link.getText();
-				
-				DownloadOrStreamDialog dialog = new DownloadOrStreamDialog(v.getContext(), linkURL);
-				dialog.build();
-				dialog.show();
-
-			}
-		}
-	};
-
 	/**
-	 * Executes after doInBackground is finished. Parses RSS XML. Populates
-	 * Scroll Layout with buttons to download podcasts.
+	 * Executes after doInBackground() is finished. Parses RSS XML. Populates
+	 * Scroll Layout with buttons to download or stream files.
 	 * 
-	 */
+	 * @param result
+	 *            RSS feed XML page
+	 * 
+	 **/
 	@Override
 	protected void onPostExecute(String result) {
 		super.onPostExecute(result);

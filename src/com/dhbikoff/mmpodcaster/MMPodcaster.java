@@ -6,7 +6,9 @@ import android.widget.LinearLayout;
 
 /**
  * Main activity for MMPodcaster. Sets UI layout and fetches RSS feed.
- */
+ * Allows user to download or stream podcasts from RSS feed XML.
+ * 
+ **/
 public class MMPodcaster extends Activity {
 
 	// RSS feed URL
